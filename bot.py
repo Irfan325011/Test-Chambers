@@ -9,7 +9,7 @@ intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # Target Channel ID (Replace with your channel's ID)
-CHANNEL_ID = 123456789012345678 
+CHANNEL_ID = 1552651786320613489
 
 # TDS Challenge Trial rotation sequence
 MODIFIERS = [
