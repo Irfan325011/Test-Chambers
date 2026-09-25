@@ -1,87 +1,80 @@
-import discord
-from discord.ext import commands, tasks
-from datetime import datetime, timezone, timedelta
 import os
 
-TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+# ... rest of your script ...
+import discord
+from discord.ext import tasks, commands
+from datetime import datetime, timezone
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-TRIALS = [
-    "Speedy Enemies",
-    "Glass",
-    "Quarantine",
-    "Fog",
-    "Limitation Makes Creativity",
-    "Flying Enemies",
-    "Jailed Towers",
-    "Exploding Enemies",
-    "Inflation",
-    "Committed",
-    "Hidden Enemies",
-    "Broke",
-    "Healthy Enemies",
+# Target Channel ID (Replace with your channel's ID)
+CHANNEL_ID = 123456789012345678 
+
+# TDS Challenge Trial rotation sequence
+MODIFIERS = [
+    {"name": "Hidden Enemies", "desc": "Enemies are hidden by default and require detection."},
+    {"name": "Glass", "desc": "Towers take increased damage or have lowered health."},
+    {"name": "Jailed", "desc": "Random tower slots are locked during play."},
+    {"name": "Exploding Enemies", "desc": "Enemies explode upon death, damaging nearby towers."},
+    {"name": "Limitation", "desc": "Strict placement limits applied to all towers."},
+    {"name": "Committed", "desc": "Towers cannot be sold once placed on the map."},
+    {"name": "Healthy Enemies", "desc": "All enemies spawn with significantly boosted health."},
+    {"name": "Speedy Enemies", "desc": "Enemies move much faster than standard speed."},
+    {"name": "Fog", "desc": "Map visibility is obscured by heavy fog."},
+    {"name": "Flying Enemies", "desc": "Flying units spawn continuously throughout waves."},
+    {"name": "Broke", "desc": "Starting cash and income generation are severely reduced."},
+    {"name": "Quarantine", "desc": "Towers must be spaced far apart from each other."},
+    {"name": "Inflation", "desc": "Tower placement and upgrade costs are increased by 50%."}
 ]
 
-ANCHOR = datetime(2026, 2, 20, 12, 0, 0, tzinfo=timezone.utc)
-ANCHOR_INDEX = TRIALS.index("Exploding Enemies")
-INTERVAL = timedelta(hours=3)
+# UTC anchor reference point
+ANCHOR_TIME = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
 
-def get_current_and_next():
+def get_current_modifier():
+    """Calculates current and next modifier based on elapsed 3-hour intervals."""
     now = datetime.now(timezone.utc)
-    elapsed = now - ANCHOR
-    slots = int(elapsed.total_seconds() // INTERVAL.total_seconds())
-    current_idx = (ANCHOR_INDEX + slots) % len(TRIALS)
-    next_idx = (current_idx + 1) % len(TRIALS)
-    current_start = ANCHOR + slots * INTERVAL
-    next_start = current_start + INTERVAL
-    return {
-        "current": TRIALS[current_idx],
-        "next": TRIALS[next_idx],
-        "next_start": next_start,
-        "time_left": next_start - now
-    }
+    hours_elapsed = int((now - ANCHOR_TIME).total_seconds() // 3600)
+    
+    current_index = (hours_elapsed // 3) % len(MODIFIERS)
+    next_index = (current_index + 1) % len(MODIFIERS)
+    
+    return MODIFIERS[current_index], MODIFIERS[next_index]
 
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user}")
-    post_trial.start()
+    print(f'Logged in as {bot.user}')
+    if not notify_trial.is_running():
+        notify_trial.start()
 
 @tasks.loop(hours=3)
-async def post_trial():
+async def notify_trial():
     channel = bot.get_channel(CHANNEL_ID)
-    if not channel:
-        print("Channel not found!")
-        return
-    data = get_current_and_next()
-    starts_in = str(data["time_left"]).split(".")[0]
-    embed = discord.Embed(
-        title="⚔️ TDS Challenge Trial",
-        color=discord.Color.blue(),
-        timestamp=datetime.now(timezone.utc)
-    )
-    embed.add_field(name="Current Trial", value=f"**{data['current']}**", inline=False)
-    embed.add_field(name="Next Trial", value=f"**{data['next']}**", inline=False)
-    embed.add_field(name="Next starts in", value=f"`{starts_in}` (at {data['next_start'].strftime('%H:%M UTC')})", inline=False)
-    embed.set_footer(text="Rotates every 3 hours • Global UTC")
-    await channel.send(embed=embed)
+    if channel:
+        current_mod, next_mod = get_current_modifier()
+        
+        embed = discord.Embed(
+            title=f"⚔️ Active Trial: {current_mod['name']}",
+            description=f"**Modifier Effect:**\n{current_mod['desc']}",
+            color=0x3498db
+        )
+        embed.add_field(
+            name="🔮 Up Next (In 3 Hours)", 
+            value=f"**{next_mod['name']}**", 
+            inline=False
+        )
+        embed.set_footer(text="Next trial refresh in 3 hours")
+        
+        await channel.send(embed=embed)
 
-@post_trial.before_loop
-async def before_post():
+@notify_trial.before_loop
+async def before_notify():
     await bot.wait_until_ready()
-    data = get_current_and_next()
-    await discord.utils.sleep_until(data["next_start"])
 
-@bot.command(name="trial")
-async def trial_cmd(ctx):
-    data = get_current_and_next()
-    starts_in = str(data["time_left"]).split(".")[0]
-    embed = discord.Embed(title="⚔️ Current TDS Trial", color=discord.Color.green())
-    embed.add_field(name="Live Now", value=f"**{data['current']}**", inline=False)
-    embed.add_field(name="Next Up", value=f"**{data['next']}**", inline=False)
-    embed.add_field(name="Changes in", value=f"`{starts_in}`", inline=False)
-    await ctx.send(embed=embed)
+# Read the token safely from the host environment
+TOKEN = os.getenv('BOT_TOKEN')
 
-bot.run(TOKEN)
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("Error: BOT_TOKEN variable was not found!")
