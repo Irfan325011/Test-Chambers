@@ -4,6 +4,10 @@ import discord
 from discord import app_commands
 from discord.ext import tasks, commands
 from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+
+# Load secret variables from .env file if testing locally
+load_dotenv()
 
 # --- BOT SETUP ---
 intents = discord.Intents.default()
@@ -53,7 +57,7 @@ MODIFIERS = [
         "name": "Committed",
         "emoji": "🗼",
         "desc": "Towers cannot be sold once placed on the map.",
-        "color": 0x34495E,
+        "color": 0x3498DB,
         "role_id": 0
     },
     {
@@ -133,12 +137,12 @@ def create_trial_embed(current_mod, next_mod, next_ts) -> discord.Embed:
     )
     embed.add_field(
         name="⚔️ ACTIVE MODIFIER",
-        value=f"**{current_mod['emoji']} {current_mod['name']}**\n> {current_mod['desc']}",
+        value=f"**{current_mod['emoji']} {current_mod['name']}**\n> {current_mod['desc']}\n\u200b",
         inline=False
     )
     embed.add_field(
         name="🔮 UP NEXT",
-        value=f"**{next_mod['emoji']} {next_mod['name']}**\n*{next_mod['desc']}*\n\n⌛ **Refreshes:** <t:{next_ts}:R> (<t:{next_ts}:t>)",
+        value=f"**{next_mod['emoji']} {next_mod['name']}**\n> *{next_mod['desc']}*\n\n⌛ **Refreshes:** <t:{next_ts}:R> (<t:{next_ts}:t>)",
         inline=False
     )
     embed.set_footer(text="Trial Refresh • Rotates every 3 hours")
@@ -205,7 +209,7 @@ async def schedule_slash(interaction: discord.Interaction):
 
     embed = discord.Embed(
         title="🗓️ TDS TRIAL MODIFIER ROTATION SCHEDULE",
-        description="Full rotation order and upcoming activation times:",
+        description="Full rotation order and upcoming activation times:\n\u200b",
         color=0x3498DB
     )
 
@@ -221,9 +225,10 @@ async def schedule_slash(interaction: discord.Interaction):
         else:
             status_text = f"⌛ <t:{ts}:R> (<t:{ts}:t>)"
 
+        # Adds blockquote formatting and spacing at the end of each entry
         embed.add_field(
             name=f"{mod['emoji']} {mod['name']}",
-            value=f"{status_text}\n*{mod['desc']}*",
+            value=f"{status_text}\n> *{mod['desc']}*\n\u200b",
             inline=False
         )
 
@@ -233,17 +238,17 @@ async def schedule_slash(interaction: discord.Interaction):
 async def help_slash(interaction: discord.Interaction):
     embed = discord.Embed(
         title="📋 TDS Rotation Bot - Commands",
-        description="Here are all available slash commands:",
+        description="Here are all available slash commands:\n\u200b",
         color=0x5865F2
     )
     embed.add_field(
         name="`/trial`",
-        value="Displays the active modifier and the upcoming modifier.",
+        value="Displays the active modifier and the upcoming modifier.\n\u200b",
         inline=False
     )
     embed.add_field(
         name="`/schedule`",
-        value="Displays all 13 trial modifiers and their upcoming schedule.",
+        value="Displays all 13 trial modifiers and their upcoming schedule.\n\u200b",
         inline=False
     )
     embed.add_field(
