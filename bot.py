@@ -130,7 +130,7 @@ def get_current_modifier():
     return MODIFIERS[current_index], MODIFIERS[next_index], next_timestamp
 
 def create_trial_embed(current_mod, next_mod, next_ts) -> discord.Embed:
-    """Generates a clean embed for the current trial rotation."""
+    """Generates an embed for automated channel notifications."""
     embed = discord.Embed(
         title="🛡️ TDS TRIAL MODIFIER ROTATION",
         color=current_mod["color"]
@@ -152,11 +152,11 @@ def create_trial_embed(current_mod, next_mod, next_ts) -> discord.Embed:
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
-    
-    # Sync slash commands with Discord
+
+    # Sync slash commands globally across all servers and user installs
     try:
         synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} slash command(s).")
+        print(f"Synced {len(synced)} slash command(s) globally.")
     except Exception as e:
         print(f"Failed to sync slash commands: {e}")
 
@@ -178,7 +178,7 @@ async def notify_trial():
 
 @notify_trial.before_loop
 async def before_notify():
-    """Aligns loop to execute on exact 3-hour clock boundaries (00:00, 03:00, etc UTC)."""
+    """Aligns loop to execute on exact 3-hour clock boundaries."""
     await bot.wait_until_ready()
     now = datetime.now(timezone.utc)
     next_hour = (now.hour // 3 + 1) * 3
@@ -189,18 +189,23 @@ async def before_notify():
         target_time = now.replace(hour=next_hour, minute=0, second=0, microsecond=0)
 
     seconds_to_wait = (target_time - now).total_seconds()
-    print(f"Waiting {int(seconds_to_wait)} seconds to sync with exact 3-hour clock schedule...")
+    print(f"Waiting {int(seconds_to_wait)} seconds to sync with schedule...")
     await asyncio.sleep(seconds_to_wait)
 
 # --- SLASH COMMANDS ---
 
-@bot.tree.command(name="trial", description="View current active TDS trial modifier and the next one.")
+@bot.tree.command(name="trial", description="Shows current trial and next modifier.")
 async def trial_slash(interaction: discord.Interaction):
     current_mod, next_mod, next_ts = get_current_modifier()
-    embed = create_trial_embed(current_mod, next_mod, next_ts)
-    await interaction.response.send_message(embed=embed)
+    
+    # Short, clean message with no wall of text
+    response_text = (
+        f"**Active Trial:** {current_mod['emoji']} {current_mod['name']}\n"
+        f"**Next Mod:** {next_mod['emoji']} {next_mod['name']} (<t:{next_ts}:R>)"
+    )
+    await interaction.response.send_message(response_text)
 
-@bot.tree.command(name="schedule", description="View the full 13-trial modifier rotation schedule.")
+@bot.tree.command(name="schedule", description="View full 13-trial modifier schedule.")
 async def schedule_slash(interaction: discord.Interaction):
     now = datetime.now(timezone.utc)
     seconds_elapsed = (now - ANCHOR_TIME).total_seconds()
@@ -209,7 +214,7 @@ async def schedule_slash(interaction: discord.Interaction):
 
     embed = discord.Embed(
         title="🗓️ TDS TRIAL MODIFIER ROTATION SCHEDULE",
-        description="Full rotation order and upcoming activation times:\n\u200b",
+        description="Full rotation order:\n\u200b",
         color=0x3498DB
     )
 
@@ -220,12 +225,11 @@ async def schedule_slash(interaction: discord.Interaction):
         ts = int(time_for_mod.timestamp())
 
         if diff == 0:
-            end_ts = ts + 10800  # +3 hours
+            end_ts = ts + 10800
             status_text = f"🟢 **ACTIVE NOW** (Ends <t:{end_ts}:R>)"
         else:
             status_text = f"⌛ <t:{ts}:R> (<t:{ts}:t>)"
 
-        # Adds blockquote formatting and spacing at the end of each entry
         embed.add_field(
             name=f"{mod['emoji']} {mod['name']}",
             value=f"{status_text}\n> *{mod['desc']}*\n\u200b",
@@ -236,27 +240,11 @@ async def schedule_slash(interaction: discord.Interaction):
 
 @bot.tree.command(name="help", description="Show available bot commands.")
 async def help_slash(interaction: discord.Interaction):
-    embed = discord.Embed(
-        title="📋 TDS Rotation Bot - Commands",
-        description="Here are all available slash commands:\n\u200b",
-        color=0x5865F2
+    await interaction.response.send_message(
+        "**Available Commands:**\n"
+        "`/trial` - Shows active trial and next modifier\n"
+        "`/schedule` - Shows the full 13-trial rotation schedule"
     )
-    embed.add_field(
-        name="`/trial`",
-        value="Displays the active modifier and the upcoming modifier.\n\u200b",
-        inline=False
-    )
-    embed.add_field(
-        name="`/schedule`",
-        value="Displays all 13 trial modifiers and their upcoming schedule.\n\u200b",
-        inline=False
-    )
-    embed.add_field(
-        name="`/help`",
-        value="Shows this list of available commands.",
-        inline=False
-    )
-    await interaction.response.send_message(embed=embed)
 
 # --- START BOT ---
 TOKEN = os.getenv('BOT_TOKEN')
