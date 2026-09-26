@@ -112,7 +112,7 @@ MODIFIERS = [
 ]
 
 # UTC reference anchor for 3-hour global rotations
-ANCHOR_TIME = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+ANCHOR_TIME = datetime(2025, 12, 31, 18, 0, 0, tzinfo=timezone.utc)
 
 def get_current_modifier():
     """Calculates active trial, next trial, and exact refresh timestamp."""
