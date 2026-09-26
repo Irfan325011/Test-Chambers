@@ -19,10 +19,10 @@ CHANNEL_ID = 1552651786320613489  # Replace with your Discord Channel ID
 # --- MODIFIER CONFIGURATION ---
 MODIFIERS = [
     {
-        "name": "Hidden Enemies",
-        "emoji": "👁️",
-        "desc": "Enemies are hidden by default and require detection.",
-        "color": 0x705898,
+        "name": "Speedy Enemies",
+        "emoji": "⚡",
+        "desc": "Enemies move much faster than standard speed.",
+        "color": 0xF1C40F,
         "role_id": 0
     },
     {
@@ -30,6 +30,34 @@ MODIFIERS = [
         "emoji": "⛑️",
         "desc": "Towers take increased damage or have lowered health.",
         "color": 0xE74C3C,
+        "role_id": 0
+    },
+    {
+        "name": "Quarantine",
+        "emoji": "☣️",
+        "desc": "Towers must be spaced far apart from each other.",
+        "color": 0x9B59B6,
+        "role_id": 0
+    },
+    {
+        "name": "Fog",
+        "emoji": "🌫️",
+        "desc": "Map visibility is obscured by heavy fog.",
+        "color": 0xBDC3C7,
+        "role_id": 0
+    },
+    {
+        "name": "Limitation",
+        "emoji": "📦",
+        "desc": "Strict placement limits applied to all towers.",
+        "color": 0x95A5A6,
+        "role_id": 0
+    },
+    {
+        "name": "Flying Enemies",
+        "emoji": "🪽",
+        "desc": "Flying units spawn continuously throughout waves.",
+        "color": 0x3498DB,
         "role_id": 0
     },
     {
@@ -47,10 +75,10 @@ MODIFIERS = [
         "role_id": 0
     },
     {
-        "name": "Limitation",
-        "emoji": "📦",
-        "desc": "Strict placement limits applied to all towers.",
-        "color": 0x95A5A6,
+        "name": "Inflation",
+        "emoji": "📈",
+        "desc": "Tower placement and upgrade costs are increased by 50%.",
+        "color": 0x1ABC9C,
         "role_id": 0
     },
     {
@@ -61,31 +89,10 @@ MODIFIERS = [
         "role_id": 0
     },
     {
-        "name": "Healthy Enemies",
-        "emoji": "💪",
-        "desc": "All enemies spawn with significantly boosted health.",
-        "color": 0x2ECC71,
-        "role_id": 0
-    },
-    {
-        "name": "Speedy Enemies",
-        "emoji": "⚡",
-        "desc": "Enemies move much faster than standard speed.",
-        "color": 0xF1C40F,
-        "role_id": 0
-    },
-    {
-        "name": "Fog",
-        "emoji": "🌫️",
-        "desc": "Map visibility is obscured by heavy fog.",
-        "color": 0xBDC3C7,
-        "role_id": 0
-    },
-    {
-        "name": "Flying Enemies",
-        "emoji": "🪽",
-        "desc": "Flying units spawn continuously throughout waves.",
-        "color": 0x3498DB,
+        "name": "Hidden Enemies",
+        "emoji": "👁️",
+        "desc": "Enemies are hidden by default and require detection.",
+        "color": 0x705898,
         "role_id": 0
     },
     {
@@ -96,23 +103,16 @@ MODIFIERS = [
         "role_id": 0
     },
     {
-        "name": "Quarantine",
-        "emoji": "☣️",
-        "desc": "Towers must be spaced far apart from each other.",
-        "color": 0x9B59B6,
-        "role_id": 0
-    },
-    {
-        "name": "Inflation",
-        "emoji": "📈",
-        "desc": "Tower placement and upgrade costs are increased by 50%.",
-        "color": 0x1ABC9C,
+        "name": "Healthy Enemies",
+        "emoji": "💪",
+        "desc": "All enemies spawn with significantly boosted health.",
+        "color": 0x2ECC71,
         "role_id": 0
     }
 ]
 
-# UTC reference anchor for 3-hour global rotations
-ANCHOR_TIME = datetime(2025, 12, 31, 18, 0, 0, tzinfo=timezone.utc)
+# UTC reference anchor synced to active "Committed" modifier
+ANCHOR_TIME = datetime(2026, 1, 1, 21, 0, 0, tzinfo=timezone.utc)
 
 def get_current_modifier():
     """Calculates active trial, next trial, and exact refresh timestamp."""
