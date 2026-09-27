@@ -28,84 +28,84 @@ MODIFIERS = [
     {
         "name": "Glass",
         "emoji": "⛑️",
-        "desc": "Towers take increased damage or have lowered health.",
+        "desc": "Base health is set to 1.",
         "color": 0xE74C3C,
         "role_id": 0
     },
     {
         "name": "Quarantine",
         "emoji": "☣️",
-        "desc": "Towers must be spaced far apart from each other.",
+        "desc": "Increases placement footprint of towers by 10.",
         "color": 0x9B59B6,
         "role_id": 0
     },
     {
         "name": "Fog",
         "emoji": "🌫️",
-        "desc": "Map visibility is obscured by heavy fog.",
+        "desc": "Tower range is reduced by 35%.",
         "color": 0xBDC3C7,
         "role_id": 0
     },
     {
         "name": "Limitation",
         "emoji": "📦",
-        "desc": "Strict placement limits applied to all towers.",
+        "desc": "Tower placement limits are by 50%.",
         "color": 0x95A5A6,
         "role_id": 0
     },
     {
         "name": "Flying Enemies",
         "emoji": "🪽",
-        "desc": "Flying units spawn continuously throughout waves.",
+        "desc": "All enemies have __Flying__ modifiers after Wave 5.",
         "color": 0x3498DB,
         "role_id": 0
     },
     {
         "name": "Jailed",
         "emoji": "🔒",
-        "desc": "Random tower slots are locked during play.",
+        "desc": "A tower is jailed randomly every wave after Wave 5.",
         "color": 0x7F8C8D,
         "role_id": 0
     },
     {
         "name": "Exploding Enemies",
         "emoji": "💥",
-        "desc": "Enemies explode upon death, damaging nearby towers.",
+        "desc": "Enemies explode on death.",
         "color": 0xE67E22,
         "role_id": 0
     },
     {
         "name": "Inflation",
         "emoji": "📈",
-        "desc": "Tower placement and upgrade costs are increased by 50%.",
+        "desc": "All prices are increased by 50%.",
         "color": 0x1ABC9C,
         "role_id": 0
     },
     {
         "name": "Committed",
         "emoji": "🗼",
-        "desc": "Towers cannot be sold once placed on the map.",
+        "desc": "Towers cannot be sold.",
         "color": 0x3498DB,
         "role_id": 0
     },
     {
         "name": "Hidden Enemies",
         "emoji": "👁️",
-        "desc": "Enemies are hidden by default and require detection.",
+        "desc": "All enemies have __Hidden__ modifier after Wave 5.",
         "color": 0x705898,
         "role_id": 0
     },
     {
         "name": "Broke",
         "emoji": "💸",
-        "desc": "Starting cash and income generation are severely reduced.",
+        "desc": "All income is reduced by 33%.",
         "color": 0x27AE60,
         "role_id": 0
     },
     {
         "name": "Healthy Enemies",
         "emoji": "💪",
-        "desc": "All enemies spawn with significantly boosted health.",
+        "desc": "All enemies have __Bloated__ modifier after Wave 5.",
         "color": 0x2ECC71,
         "role_id": 0
     }
