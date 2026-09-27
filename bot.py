@@ -28,84 +28,84 @@ MODIFIERS = [
     {
         "name": "Glass",
         "emoji": "⛑️",
-        "desc": "Base health is set to 1.",
+        "desc": "Towers take increased damage or have lowered health.",
         "color": 0xE74C3C,
         "role_id": 0
     },
     {
         "name": "Quarantine",
         "emoji": "☣️",
-        "desc": "Increases placement footprint of towers by 10.",
+        "desc": "Towers must be spaced far apart from each other.",
         "color": 0x9B59B6,
         "role_id": 0
     },
     {
         "name": "Fog",
         "emoji": "🌫️",
-        "desc": "Tower range is reduced by 35%.",
+        "desc": "Map visibility is obscured by heavy fog.",
         "color": 0xBDC3C7,
         "role_id": 0
     },
     {
         "name": "Limitation",
         "emoji": "📦",
-        "desc": "Tower placement limits are by 50%.",
+        "desc": "Strict placement limits applied to all towers.",
         "color": 0x95A5A6,
         "role_id": 0
     },
     {
         "name": "Flying Enemies",
         "emoji": "🪽",
-        "desc": "All enemies have __Flying__ modifiers after Wave 5.",
+        "desc": "Flying units spawn continuously throughout waves.",
         "color": 0x3498DB,
         "role_id": 0
     },
     {
         "name": "Jailed",
         "emoji": "🔒",
-        "desc": "A tower is jailed randomly every wave after Wave 5.",
+        "desc": "Random tower slots are locked during play.",
         "color": 0x7F8C8D,
         "role_id": 0
     },
     {
         "name": "Exploding Enemies",
         "emoji": "💥",
-        "desc": "Enemies explode on death.",
+        "desc": "Enemies explode upon death, damaging nearby towers.",
         "color": 0xE67E22,
         "role_id": 0
     },
     {
         "name": "Inflation",
         "emoji": "📈",
-        "desc": "All prices are increased by 50%.",
+        "desc": "Tower placement and upgrade costs are increased by 50%.",
         "color": 0x1ABC9C,
         "role_id": 0
     },
     {
         "name": "Committed",
         "emoji": "🗼",
-        "desc": "Towers cannot be sold.",
+        "desc": "Towers cannot be sold once placed on the map.",
         "color": 0x3498DB,
         "role_id": 0
     },
     {
         "name": "Hidden Enemies",
         "emoji": "👁️",
-        "desc": "All enemies have __Hidden__ modifier after Wave 5.",
+        "desc": "Enemies are hidden by default and require detection.",
         "color": 0x705898,
         "role_id": 0
     },
     {
         "name": "Broke",
         "emoji": "💸",
-        "desc": "All income is reduced by 33%.",
+        "desc": "Starting cash and income generation are severely reduced.",
         "color": 0x27AE60,
         "role_id": 0
     },
     {
         "name": "Healthy Enemies",
         "emoji": "💪",
-        "desc": "All enemies have __Bloated__ modifier after Wave 5.",
+        "desc": "All enemies spawn with significantly boosted health.",
         "color": 0x2ECC71,
         "role_id": 0
     }
@@ -195,12 +195,16 @@ async def before_notify():
 # --- SLASH COMMANDS ---
 
 @bot.tree.command(name="trial", description="View current active TDS trial modifier and the next one.")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def trial_slash(interaction: discord.Interaction):
     current_mod, next_mod, next_ts = get_current_modifier()
     embed = create_trial_embed(current_mod, next_mod, next_ts)
     await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name="schedule", description="View the full 13-trial modifier rotation schedule.")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def schedule_slash(interaction: discord.Interaction):
     now = datetime.now(timezone.utc)
     seconds_elapsed = (now - ANCHOR_TIME).total_seconds()
@@ -235,6 +239,8 @@ async def schedule_slash(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name="help", description="Show available bot commands.")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def help_slash(interaction: discord.Interaction):
     embed = discord.Embed(
         title="📋 TDS Rotation Bot - Commands",
@@ -257,6 +263,14 @@ async def help_slash(interaction: discord.Interaction):
         inline=False
     )
     await interaction.response.send_message(embed=embed)
+    
+@bot.tree.command(name="test", description="Basic test command.")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def test_slash(interaction: discord.Interaction):
+    # Change the text and link inside the quotes to whatever you want
+    await interaction.response.send_message("Yo! Bot is working fine. Here's the link: https://discord.com")
+
 
 # --- START BOT ---
 TOKEN = os.getenv('BOT_TOKEN')
